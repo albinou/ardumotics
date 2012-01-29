@@ -2,15 +2,16 @@
 
 #include "ardumotics.h"
 #include "ardumotics_module.h"
+#include "arduino_io.h"
 
 
 int main(void)
 {
 	ardumotics_modules_register_all();
 
-  DDRB |= _BV(PB5);
-  PORTB |= _BV(PB5);
-  while (1)
-    ;
-  return 0;
+	ARDUINO_PIN_MODE(13, OUTPUT);
+	ARDUINO_OUTD(13, HIGH);
+	while (1)
+		;
+	return 0;
 }
