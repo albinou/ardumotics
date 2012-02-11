@@ -11,6 +11,9 @@ reset:
 upload:
 	@scons upload
 
+size:
+	@scons size
+
 clean:
 	@scons -c
 

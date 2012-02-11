@@ -61,3 +61,6 @@ env.Command("reset", None, "%s --file=%s hupcl" % (STTY, ARDUINO_PORT))
 # Upload target:
 env.Command("upload", ardumotics_hex,
             "%s %s -U flash:w:$SOURCE:i" % (AVRDUDE, AVRDUDE_OPTS))
+
+# Size target:
+env.Command("size", ardumotics_elf, "%s $SOURCE" % (SIZE))
