@@ -4,6 +4,7 @@
 
 #include "ardumotics.h"
 #include "ardumotics_module.h"
+#include "ardumotics_cmd.h"
 #include "arduino_io.h"
 #include "arduino_uart.h"
 
@@ -32,7 +33,7 @@ int main(void)
 		cmd = arduino_uart_getline();
 		if (cmd)
 		{
-			printf_P(PSTR("command = %s\n"), cmd);
+			ardumotics_cmd_exec(cmd);
 			printf_P(PSTR(ARDUMOTICS_PROMPT));
 			arduino_uart_continue();
 		}

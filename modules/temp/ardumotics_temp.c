@@ -1,4 +1,5 @@
-#include <string.h>
+#include <stdio.h>
+#include <avr/pgmspace.h>
 
 #include "ardumotics_module.h"
 #include "ardumotics_log.h"
@@ -6,12 +7,13 @@
 #include "ardumotics_temp.h"
 
 static int ardumotics_temp_init(void);
-static int ardumotics_temp_get (char *res, const char *args);
+static int ardumotics_temp_get (const char **args);
 
 static uint8_t module_io[] = { 255 };
 
-static struct ardumotics_module_cmd ardumotics_temp_cmd[] = {
-  { "get", ardumotics_temp_get }
+static const struct ardumotics_module_cmd ardumotics_temp_cmd[] = {
+	{ "get", ardumotics_temp_get },
+	{ NULL, NULL },
 };
 
 static struct ardumotics_module module_temp =
@@ -23,7 +25,7 @@ static struct ardumotics_module module_temp =
 		.private_data =     NULL,
 
 		.init =             ardumotics_temp_init,
-    .cmd =              ardumotics_temp_cmd,
+		.cmd =              ardumotics_temp_cmd,
 	};
 
 void ardumotics_temp_register(void)
@@ -39,8 +41,8 @@ static int ardumotics_temp_init(void)
 	return 0;
 }
 
-static int ardumotics_temp_get (char *res, const char *args)
+static int ardumotics_temp_get (const char **args)
 {
-  strcpy (res, "OK");
-  return 0;
+	puts_P(PSTR("OK"));
+	return 0;
 }

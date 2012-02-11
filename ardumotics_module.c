@@ -10,7 +10,7 @@
 #endif /* !ARDUMOTICS_CONFIG_TEMP */
 
 
-static struct ardumotics_module *module_head;
+static struct ardumotics_module *module_head = NULL;
 
 
 void ardumotics_modules_register_all(void)
@@ -54,4 +54,28 @@ int ardumotics_module_unregister(struct ardumotics_module *module)
 
 	prev->next = m->next;
   return 0;
+}
+
+static int ardumotics_module_exec_cmd(const struct ardumotics_module *module,
+                                      const char *cmd, const char **args)
+{
+	const struct ardumotics_module_cmd *c;
+
+	for (c = module->cmd; c->name != NULL; ++c)
+		if (strcmp(c->name, cmd) == 0)
+			return c->fct(args);
+
+	return -ENOCMD;
+}
+
+int ardumotics_module_exec(const char *module, const char *cmd,
+                           const char **args)
+{
+	const struct ardumotics_module *m;
+
+	for (m = module_head; m != NULL; m = m->next)
+		if (strcmp(m->name, module) == 0)
+			return ardumotics_module_exec_cmd(m, cmd, args);
+
+	return -ENOMOD;
 }

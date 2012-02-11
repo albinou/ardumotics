@@ -4,8 +4,8 @@
 # include <stdint.h>
 
 struct ardumotics_module_cmd {
-	char *cmd;
-	int (*fct) (char *res, const char* args);
+	char *name;
+	int (*fct) (const char** args);
 };
 
 struct ardumotics_module {
@@ -16,7 +16,7 @@ struct ardumotics_module {
 	void          *private_data;
 
 	int (*init)(void);
-	struct ardumotics_module_cmd *cmd;
+	const struct ardumotics_module_cmd *cmd;
 
 	struct ardumotics_module *next;
 };
@@ -25,5 +25,8 @@ void ardumotics_modules_register_all(void);
 
 int ardumotics_module_register(struct ardumotics_module *module);
 int ardumotics_module_unregister(struct ardumotics_module *module);
+
+int ardumotics_module_exec(const char *module, const char *cmd,
+                           const char **args);
 
 #endif /* !_ARDUMOTICS_MODULE_H_ */
