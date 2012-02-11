@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ardumotics_module.h"
+#include "ardumotics_mod.h"
 #include "ardumotics_config.h"
 #include "ardumotics_errno.h"
 
@@ -10,19 +10,19 @@
 #endif /* !ARDUMOTICS_CONFIG_TEMP */
 
 
-static struct ardumotics_module *module_head = NULL;
+static struct ardumotics_mod *module_head = NULL;
 
 
-void ardumotics_modules_register_all(void)
+void ardumotics_mod_register_all(void)
 {
 #ifdef ARDUMOTICS_CONFIG_TEMP
 	ardumotics_temp_register();
 #endif /* !ARDUMOTICS_CONFIG_TEMP */
 }
 
-int ardumotics_module_register(struct ardumotics_module *module)
+int ardumotics_mod_register(struct ardumotics_mod *module)
 {
-	struct ardumotics_module *m;
+	struct ardumotics_mod *m;
 
 	if (module->name == NULL)
 		return -EINVAL;
@@ -36,10 +36,10 @@ int ardumotics_module_register(struct ardumotics_module *module)
 	return 0;
 }
 
-int ardumotics_module_unregister(struct ardumotics_module *module)
+int ardumotics_mod_unregister(struct ardumotics_mod *module)
 {
-	struct ardumotics_module *m;
-	struct ardumotics_module *prev = module_head;
+	struct ardumotics_mod *m;
+	struct ardumotics_mod *prev = module_head;
 
 	if (module->name == NULL)
 		return -EINVAL;
@@ -56,10 +56,10 @@ int ardumotics_module_unregister(struct ardumotics_module *module)
   return 0;
 }
 
-static int ardumotics_module_exec_cmd(const struct ardumotics_module *module,
-                                      const char *cmd, const char **args)
+static int ardumotics_mod_exec_cmd(const struct ardumotics_mod *module,
+                                   const char *cmd, const char **args)
 {
-	const struct ardumotics_module_cmd *c;
+	const struct ardumotics_mod_cmd *c;
 
 	for (c = module->cmd; c->name != NULL; ++c)
 		if (strcmp(c->name, cmd) == 0)
@@ -68,14 +68,14 @@ static int ardumotics_module_exec_cmd(const struct ardumotics_module *module,
 	return -ENOCMD;
 }
 
-int ardumotics_module_exec(const char *module, const char *cmd,
-                           const char **args)
+int ardumotics_mod_exec(const char *module, const char *cmd,
+                        const char **args)
 {
-	const struct ardumotics_module *m;
+	const struct ardumotics_mod *m;
 
 	for (m = module_head; m != NULL; m = m->next)
 		if (strcmp(m->name, module) == 0)
-			return ardumotics_module_exec_cmd(m, cmd, args);
+			return ardumotics_mod_exec_cmd(m, cmd, args);
 
 	return -ENOMOD;
 }

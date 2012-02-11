@@ -3,7 +3,7 @@
 #include <util/delay.h>
 
 #include "ardumotics.h"
-#include "ardumotics_module.h"
+#include "ardumotics_mod.h"
 #include "ardumotics_cmd.h"
 #include "arduino_io.h"
 #include "arduino_uart.h"
@@ -13,7 +13,7 @@ int main(void)
 {
 	char *cmd;
 
-	ardumotics_modules_register_all();
+	ardumotics_mod_register_all();
 	arduino_uart_init(103);
 
 	ARDUINO_PIN_MODE(13, OUTPUT);

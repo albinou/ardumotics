@@ -3,7 +3,7 @@
 #include <avr/pgmspace.h>
 
 #include "ardumotics_cmd.h"
-#include "ardumotics_module.h"
+#include "ardumotics_mod.h"
 #include "ardumotics_errno.h"
 
 static int ardumotics_cmd_help(const char **args);
@@ -94,7 +94,7 @@ static int ardumotics_cmd_mod(const char **args)
 		cmd = "help";
 	else
 		cmd = args[2];
-	res = ardumotics_module_exec(module, cmd, &args[3]);
+	res = ardumotics_mod_exec(module, cmd, &args[3]);
 	if (res == -ENOMOD)
 		printf_P(PSTR("%s: No such module\n"), module);
 	if (res == -ENOCMD)

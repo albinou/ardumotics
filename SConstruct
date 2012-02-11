@@ -31,7 +31,7 @@ Usage: 'scons'          build ardumotics
 """)
 
 ARDUMOTICS_SRCS  = ["ardumotics.c",
-                    "ardumotics_module.c",
+                    "ardumotics_mod.c",
                     "ardumotics_cmd.c",
                     "ardumotics_log.c",
                     "arduino_uart.c"]
