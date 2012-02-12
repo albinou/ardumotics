@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "ardumotics_dev.h"
+#include "ardumotics_mod.h"
 #include "ardumotics_errno.h"
 
 static struct ardumotics_dev *dev_head;
@@ -76,4 +77,14 @@ int ardumotics_dev_register(const char *mod, const uint8_t *io_list,
 int ardumotics_dev_unregister(uint8_t dd)
 {
 	return 0;
+}
+
+struct ardumotics_dev *ardumotics_dev_find(int dd)
+{
+	struct ardumotics_dev *dev;
+
+	for (dev = dev_head; dev->dd != dd; dev = dev->next)
+		;
+
+	return dev;
 }

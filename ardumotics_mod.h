@@ -7,7 +7,8 @@ struct ardumotics_dev;
 
 struct ardumotics_mod_cmd {
 	char *name;										/**< command name */
-	int (*fct) (const char** args);	/**< callback of the command */
+	int (*fct) (struct ardumotics_dev *dev,
+	            const char** args);	/**< callback of the command */
 };
 
 struct ardumotics_mod {
@@ -28,7 +29,7 @@ int ardumotics_mod_unregister(struct ardumotics_mod *module);
 
 struct ardumotics_mod *ardumotics_mod_find(const char *name);
 
-int ardumotics_mod_exec(const char *module, const char *cmd,
-                        const char **args);
+int ardumotics_mod_exec(const char *module, uint8_t dd,
+                        const char *cmd, const char **args);
 
 #endif /* !_ARDUMOTICS_MOD_H_ */

@@ -38,7 +38,8 @@ ARDUMOTICS_SRCS  = ["ardumotics.c",
                     "arduino_io.c",
                     "arduino_uart.c"]
 
-ARDUMOTICS_MODULES = [("modules/temp", "ardumotics_temp", ["ardumotics_temp.c"])]
+ARDUMOTICS_MODULES = [("modules/temp", "ardumotics_temp", ["ardumotics_temp.c"]),
+                      ("modules/led", "ardumotics_led", ["ardumotics_led.c"])]
 
 ardumotics_inc = ["."]
 for m in ARDUMOTICS_MODULES:

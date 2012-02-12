@@ -72,7 +72,7 @@ static int ardumotics_cmd_help(const char **args)
 {
 	puts_P(PSTR("Ardumotics commands:"));
 	puts_P(PSTR("  mod list:                             list loaded modules"));
-	puts_P(PSTR("  mod <name> <cmd> [args]:              execute a command on a module"));
+	puts_P(PSTR("  mod <name> <cmd> <dd> [args]:         execute a command on a module"));
 	puts_P(PSTR("  dev register <mod_name> <i/o ...>:    register a new device"));
 	puts_P(PSTR("  dev unregister <dd>:                  unregister a device"));
 	puts_P(PSTR("  help:                                 display this help message"));
@@ -83,11 +83,13 @@ static int ardumotics_cmd_mod(const char **args)
 {
 	const char *module;
 	const char *cmd;
+	char *endstr;
+	int dd;
 	int res;
 
 	if ((args[1] == NULL) || (strcmp(args[1], "help") == 0))
 	{
-		puts_P(PSTR("usage: mod <name> <cmd> [args]"));
+		puts_P(PSTR("usage: mod <name> <cmd> <dd> [args]"));
 		puts_P(PSTR("   or: mod list"));
 		return 0;
 	}
@@ -102,7 +104,13 @@ static int ardumotics_cmd_mod(const char **args)
 		cmd = "help";
 	else
 		cmd = args[2];
-	res = ardumotics_mod_exec(module, cmd, &args[3]);
+	dd = strtol(args[3], &endstr, 10);
+	if (errno || (dd < 0) || (dd > UINT8_MAX) || (*endstr != '\0'))
+	{
+		puts_P(PSTR("Invalid device descriptor"));
+		return -EINVAL;
+	}
+	res = ardumotics_mod_exec(module, dd, cmd, &args[4]);
 	if (res == -ENOMOD)
 		printf_P(PSTR("%s: No such module\n"), module);
 	if (res == -ENOCMD)

@@ -1,7 +1,9 @@
 #ifndef _ARDUMOTICS_DEV_H_
 # define _ARDUMOTICS_DEV_H_
 
-# include "ardumotics_mod.h"
+# include <stdint.h>
+
+struct ardumotics_mod;
 
 struct ardumotics_dev {
 	uint8_t				dd;							/**< device descriptor (unique) */
@@ -16,5 +18,7 @@ struct ardumotics_dev {
 int ardumotics_dev_register(const char *module, const uint8_t *io_list,
                             int io_list_sz);
 int ardumotics_dev_unregister(uint8_t dd);
+
+struct ardumotics_dev *ardumotics_dev_find(int dd);
 
 #endif /* _ARDUMOTICS_DEV_H_ */
