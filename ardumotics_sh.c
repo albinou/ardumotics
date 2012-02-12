@@ -136,8 +136,12 @@ static int ardumotics_cmd_dev(const char **args)
 	{
 		for (i = 0; args[i + 3] != NULL; ++i)
 		{
-			if ((res = arduino_io_strtoi(args[i + 2]) >= 0))
-				io_list[i] = res;
+			if ((res = arduino_io_strtoi(args[i + 3])) < 0)
+			{
+				puts_P(PSTR("Invalid I/O pin number"));
+				return -EINVAL;
+			}
+			io_list[i] = res;
 		}
 		if ((res = ardumotics_dev_register(args[2], io_list, i)) < 0)
 			printf_P(PSTR("Cannot register device (errno = %d)\n"), -res);
