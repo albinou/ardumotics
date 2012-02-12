@@ -55,66 +55,12 @@
   } while (0)
 
 
-volatile uint8_t PROGMEM *const arduino_io_port_to_mode_PGM[] = {
-	ARDUINO_NOT_A_PORT,
-	ARDUINO_NOT_A_PORT,
-	&DDRB,
-	&DDRC,
-	&DDRD,
-};
+extern volatile uint8_t *const arduino_io_port_to_mode_PGM[];
+extern volatile uint8_t *const arduino_io_port_to_output_PGM[];
+extern const uint8_t arduino_io_digital_pin_to_port_PGM[30];
+extern const uint8_t arduino_io_digital_pin_to_bit_mask_PGM[30];
 
-volatile uint8_t PROGMEM *const arduino_io_port_to_output_PGM[] = {
-	ARDUINO_NOT_A_PORT,
-	ARDUINO_NOT_A_PORT,
-	&PORTB,
-	&PORTC,
-	&PORTD,
-};
 
-const uint8_t PROGMEM arduino_io_digital_pin_to_port_PGM[30] = {
-	ARDUINO_PD, /* 0 */
-	ARDUINO_PD,
-	ARDUINO_PD,
-	ARDUINO_PD,
-	ARDUINO_PD,
-	ARDUINO_PD,
-	ARDUINO_PD,
-	ARDUINO_PD,
-	ARDUINO_PB, /* 8 */
-	ARDUINO_PB,
-	ARDUINO_PB,
-	ARDUINO_PB,
-	ARDUINO_PB,
-	ARDUINO_PB,
-	ARDUINO_PC, /* 14 */
-	ARDUINO_PC,
-	ARDUINO_PC,
-	ARDUINO_PC,
-	ARDUINO_PC,
-	ARDUINO_PC,
-};
-
-const uint8_t PROGMEM arduino_io_digital_pin_to_bit_mask_PGM[30] = {
-	_BV(0), /* 0, port D */
-	_BV(1),
-	_BV(2),
-	_BV(3),
-	_BV(4),
-	_BV(5),
-	_BV(6),
-	_BV(7),
-	_BV(0), /* 8, port B */
-	_BV(1),
-	_BV(2),
-	_BV(3),
-	_BV(4),
-	_BV(5),
-	_BV(0), /* 14, port C */
-	_BV(1),
-	_BV(2),
-	_BV(3),
-	_BV(4),
-	_BV(5),
-};
+int ardumotics_io_strtoi(const char *port);
 
 #endif /* !_ARDUINO_IO_H_ */

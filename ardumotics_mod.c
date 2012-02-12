@@ -10,7 +10,7 @@
 #endif /* !ARDUMOTICS_CONFIG_TEMP */
 
 
-static struct ardumotics_mod *module_head = NULL;
+static struct ardumotics_mod *mod_head = NULL;
 
 
 void ardumotics_mod_register_all(void)
@@ -26,12 +26,12 @@ int ardumotics_mod_register(struct ardumotics_mod *module)
 
 	if (module->name == NULL)
 		return -EINVAL;
-	for (m = module_head; m != NULL; m = m->next)
+	for (m = mod_head; m != NULL; m = m->next)
 		if (strcmp(m->name, module->name) == 0)
 			return -EINVAL;
 
-	module->next = module_head;
-	module_head = module;
+	module->next = mod_head;
+	mod_head = module;
 
 	return 0;
 }
@@ -39,11 +39,11 @@ int ardumotics_mod_register(struct ardumotics_mod *module)
 int ardumotics_mod_unregister(struct ardumotics_mod *module)
 {
 	struct ardumotics_mod *m;
-	struct ardumotics_mod *prev = module_head;
+	struct ardumotics_mod *prev = mod_head;
 
 	if (module->name == NULL)
 		return -EINVAL;
-	for (m = module_head; m != NULL; m = m->next)
+	for (m = mod_head; m != NULL; m = m->next)
 	{
 		if (strcmp(m->name, module->name) == 0)
 			break;
@@ -54,6 +54,17 @@ int ardumotics_mod_unregister(struct ardumotics_mod *module)
 
 	prev->next = m->next;
   return 0;
+}
+
+struct ardumotics_mod *ardumotics_mod_find(const char *name)
+{
+	struct ardumotics_mod *m;
+
+	for (m = mod_head; m != NULL; m = m->next)
+		if (strcmp(m->name, name) == 0)
+			return m;
+
+	return NULL;
 }
 
 static int ardumotics_mod_exec_cmd(const struct ardumotics_mod *module,
@@ -73,9 +84,8 @@ int ardumotics_mod_exec(const char *module, const char *cmd,
 {
 	const struct ardumotics_mod *m;
 
-	for (m = module_head; m != NULL; m = m->next)
-		if (strcmp(m->name, module) == 0)
-			return ardumotics_mod_exec_cmd(m, cmd, args);
-
-	return -ENOMOD;
+	if ((m = ardumotics_mod_find(module)) == NULL)
+		return -ENOMOD;
+	else
+		return ardumotics_mod_exec_cmd(m, cmd, args);
 }

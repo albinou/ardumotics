@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <avr/io.h>
-#include <util/delay.h>
 
 #include "ardumotics.h"
 #include "ardumotics_mod.h"
@@ -18,8 +17,6 @@ int main(void)
 
 	ARDUINO_PIN_MODE(13, OUTPUT);
 	ARDUINO_OUTD(13, HIGH);
-
-	_delay_ms(1000);
 
 	puts_P(PSTR("Ardumotics configuration: OK"));
 	puts_P(PSTR(""));
