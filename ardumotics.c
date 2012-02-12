@@ -3,7 +3,7 @@
 
 #include "ardumotics.h"
 #include "ardumotics_mod.h"
-#include "ardumotics_cmd.h"
+#include "ardumotics_sh.h"
 #include "arduino_io.h"
 #include "arduino_uart.h"
 

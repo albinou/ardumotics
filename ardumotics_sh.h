@@ -1,7 +1,7 @@
-#ifndef _ARDUMOTICS_CMD_H_
-# define _ARDUMOTICS_CMD_H_
+#ifndef _ARDUMOTICS_SH_H_
+# define _ARDUMOTICS_SH_H_
 
-# define ARDUMOTICS_CMD_ARGS_MAX 10
+# define ARDUMOTICS_SH_ARGS_MAX 10
 
 struct ardumotics_cmd {
 	const char *name;
@@ -10,4 +10,4 @@ struct ardumotics_cmd {
 
 void ardumotics_cmd_exec(char *cmd);
 
-#endif /* !_ARDUMOTICS_CMD_H_ */
+#endif /* !_ARDUMOTICS_SH_H_ */

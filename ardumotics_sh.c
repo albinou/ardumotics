@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <avr/pgmspace.h>
 
-#include "ardumotics_cmd.h"
+#include "ardumotics_sh.h"
 #include "ardumotics_mod.h"
 #include "ardumotics_dev.h"
 #include "ardumotics_errno.h"
@@ -22,7 +22,7 @@ static struct ardumotics_cmd ardumotics_cmds[] = {
 };
 
 
-static int ardumotics_cmd_split_args(const char *args[ARDUMOTICS_CMD_ARGS_MAX + 1],
+static int ardumotics_cmd_split_args(const char *args[ARDUMOTICS_SH_ARGS_MAX + 1],
                                      char *cmd)
 {
 	int i = 0;
@@ -31,7 +31,7 @@ static int ardumotics_cmd_split_args(const char *args[ARDUMOTICS_CMD_ARGS_MAX + 
 		++cmd;
 	while (*cmd != '\0')
 	{
-		if (i >= ARDUMOTICS_CMD_ARGS_MAX)
+		if (i >= ARDUMOTICS_SH_ARGS_MAX)
 			return -ENOMEM;
 		args[i++] = cmd;
 		while ((*cmd != '\0') && (*cmd != ' '))
@@ -52,7 +52,7 @@ static int ardumotics_cmd_split_args(const char *args[ARDUMOTICS_CMD_ARGS_MAX + 
 void ardumotics_cmd_exec(char *cmd)
 {
 	struct ardumotics_cmd *p;
-	const char *args[ARDUMOTICS_CMD_ARGS_MAX + 1];
+	const char *args[ARDUMOTICS_SH_ARGS_MAX + 1];
 
 	if (ardumotics_cmd_split_args(args, cmd))
 		return;
@@ -112,7 +112,7 @@ static int ardumotics_cmd_mod(const char **args)
 
 static int ardumotics_cmd_dev(const char **args)
 {
-	uint8_t io_list[ARDUMOTICS_CMD_ARGS_MAX - 3];
+	uint8_t io_list[ARDUMOTICS_SH_ARGS_MAX - 3];
 	char *endstr;
 	long int dd;
 	int res;
