@@ -65,6 +65,8 @@ int ardumotics_dev_register(const char *mod, const uint8_t *io_list,
 	if ((dd = ardumotics_dev_add(dev)) < 0)
 		goto fail;
 
+	m->init_dev(dev);
+
 	return dd;
 
  fail:

@@ -136,7 +136,7 @@ static int ardumotics_cmd_dev(const char **args)
 	{
 		for (i = 0; args[i + 3] != NULL; ++i)
 		{
-			if ((res = ardumotics_io_strtoi(args[i + 2]) >= 0))
+			if ((res = arduino_io_strtoi(args[i + 2]) >= 0))
 				io_list[i] = res;
 		}
 		if ((res = ardumotics_dev_register(args[2], io_list, i)) < 0)

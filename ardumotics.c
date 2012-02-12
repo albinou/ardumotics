@@ -15,8 +15,8 @@ int main(void)
 	ardumotics_mod_register_all();
 	arduino_uart_init(103);
 
-	ARDUINO_PIN_MODE(13, OUTPUT);
-	ARDUINO_OUTD(13, HIGH);
+	arduino_io_pin_mode(13, OUTPUT);
+	arduino_io_outd(13, HIGH);
 
 	puts_P(PSTR("Ardumotics configuration: OK"));
 	puts_P(PSTR(""));

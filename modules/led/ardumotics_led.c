@@ -38,19 +38,19 @@ void ardumotics_led_register(void)
 
 static int ardumotics_led_init(struct ardumotics_dev *dev)
 {
-	ARDUINO_PIN_MODE(dev->io_list[0], OUTPUT);
-	ARDUINO_OUTD(dev->io_list[0], LOW);
+	arduino_io_pin_mode(dev->io_list[0], OUTPUT);
+	arduino_io_outd(dev->io_list[0], LOW);
 	return 0;
 }
 
 static int ardumotics_led_on(struct ardumotics_dev *dev, const char **args)
 {
-	ARDUINO_OUTD(dev->io_list[0], HIGH);
+	arduino_io_outd(dev->io_list[0], HIGH);
 	return 0;
 }
 
 static int ardumotics_led_off(struct ardumotics_dev *dev, const char **args)
 {
-	ARDUINO_OUTD(dev->io_list[0], LOW);
+	arduino_io_outd(dev->io_list[0], LOW);
 	return 0;
 }

@@ -5,7 +5,7 @@
 #include "ardumotics_errno.h"
 
 
-volatile uint8_t *const arduino_io_port_to_mode_PGM[] PROGMEM = {
+volatile uint8_t *const arduino_io_port_to_mode[] PROGMEM = {
 	ARDUINO_NOT_A_PORT,
 	ARDUINO_NOT_A_PORT,
 	&DDRB,
@@ -13,7 +13,7 @@ volatile uint8_t *const arduino_io_port_to_mode_PGM[] PROGMEM = {
 	&DDRD,
 };
 
-volatile uint8_t *const arduino_io_port_to_output_PGM[] PROGMEM = {
+volatile uint8_t *const arduino_io_port_to_output[] PROGMEM = {
 	ARDUINO_NOT_A_PORT,
 	ARDUINO_NOT_A_PORT,
 	&PORTB,
@@ -21,7 +21,7 @@ volatile uint8_t *const arduino_io_port_to_output_PGM[] PROGMEM = {
 	&PORTD,
 };
 
-const uint8_t arduino_io_digital_pin_to_port_PGM[30] PROGMEM = {
+const uint8_t arduino_io_digital_pin_to_port[30] PROGMEM = {
 	ARDUINO_PD, /* 0 */
 	ARDUINO_PD,
 	ARDUINO_PD,
@@ -44,7 +44,7 @@ const uint8_t arduino_io_digital_pin_to_port_PGM[30] PROGMEM = {
 	ARDUINO_PC,
 };
 
-const uint8_t arduino_io_digital_pin_to_bit_mask_PGM[30] PROGMEM = {
+const uint8_t arduino_io_digital_pin_to_bit_mask[30] PROGMEM = {
 	_BV(0), /* 0, port D */
 	_BV(1),
 	_BV(2),
@@ -68,7 +68,53 @@ const uint8_t arduino_io_digital_pin_to_bit_mask_PGM[30] PROGMEM = {
 };
 
 
-int ardumotics_io_strtoi(const char *port)
+/**
+ * Configure a PIN as INPUT or OUTPUT
+ *
+ * @param pin Arduino pin number
+ * @param mode mode INPUT or OUTPUT
+ */
+void arduino_io_pin_mode(uint8_t pin, int mode)
+{
+	uint8_t port;
+	uint8_t mask;
+	volatile uint8_t *out_mode;
+
+	port = pgm_read_byte(arduino_io_digital_pin_to_port + pin);
+	out_mode = (volatile uint8_t *)
+		((uint16_t ) pgm_read_byte(arduino_io_port_to_mode + port));
+	mask = pgm_read_byte(arduino_io_digital_pin_to_bit_mask + pin);
+
+	if (mode == INPUT)
+		*out_mode &= ~mask;
+	else
+		*out_mode |= mask;
+}
+
+/**
+ * Output the value to the specfied pin
+ *
+ * @param pin Arduino pin number
+ * @param val value HIGH or LOW
+ */
+void arduino_io_outd(uint8_t pin, int val)
+{
+	uint8_t port;
+	uint8_t mask;
+	volatile uint8_t *outd;
+
+	port = pgm_read_byte(arduino_io_digital_pin_to_port + pin);
+	outd = (volatile uint8_t *)
+		((uint16_t) pgm_read_byte(arduino_io_port_to_output + port));
+	mask = pgm_read_byte(arduino_io_digital_pin_to_bit_mask + pin);
+
+	if (val == LOW)
+		*outd &= ~mask;
+	else
+		*outd |= mask;
+}
+
+int arduino_io_strtoi(const char *port)
 {
 	int res;
 	char *endstr;
