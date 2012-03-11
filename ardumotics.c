@@ -2,7 +2,8 @@
 #include <avr/io.h>
 
 #include "ardumotics.h"
-#include "ardumotics_mod.h"
+#include "ardumotics_dev.h"
+#include "ardumotics_job.h"
 #include "ardumotics_sh.h"
 #include "arduino_io.h"
 #include "arduino_uart.h"
@@ -27,10 +28,11 @@ int main(void)
 
 	while (1)
 	{
+		ardumotics_job_exec();
 		cmd = arduino_uart_getline();
 		if (cmd)
 		{
-			ardumotics_cmd_exec(cmd);
+			ardumotics_sh_exec(cmd);
 			printf_P(PSTR(ARDUMOTICS_PROMPT));
 			arduino_uart_continue();
 		}

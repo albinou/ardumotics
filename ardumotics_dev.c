@@ -1,10 +1,9 @@
 #include <stdlib.h>
 
 #include "ardumotics_dev.h"
-#include "ardumotics_mod.h"
 #include "ardumotics_errno.h"
 
-static struct ardumotics_dev *dev_head;
+static struct ardumotics_dev *dev_head = NULL;
 
 static int ardumotics_dev_add(struct ardumotics_dev *dev)
 {
@@ -85,8 +84,23 @@ struct ardumotics_dev *ardumotics_dev_find(int dd)
 {
 	struct ardumotics_dev *dev;
 
-	for (dev = dev_head; dev->dd != dd; dev = dev->next)
+	for (dev = dev_head; (dev != NULL) && (dev->dd != dd); dev = dev->next)
 		;
 
 	return dev;
+}
+
+int ardumotics_dev_exec(int dd, const char *cmd, const char **args)
+{
+	struct ardumotics_dev *dev;
+
+	if ((dev = ardumotics_dev_find(dd)) == NULL)
+		return -ENODEV;
+	return ardumotics_mod_exec(dev->mod, dev, cmd, args);
+}
+
+t_cmd_handler ardumotics_dev_get_fct(const struct ardumotics_dev *dev,
+                                     const char *cmd)
+{
+	return ardumotics_mod_get_fct(dev->mod, cmd);
 }

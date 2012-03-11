@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "ardumotics_mod.h"
-#include "ardumotics_dev.h"
 #include "ardumotics_config.h"
 #include "ardumotics_errno.h"
 
@@ -13,6 +12,10 @@
 #ifdef ARDUMOTICS_CONFIG_LED
 # include "ardumotics_led.h"
 #endif /* !ARDUMOTICS_CONFIG_LED */
+
+#ifdef ARDUMOTICS_CONFIG_TIMER
+# include "ardumotics_timer.h"
+#endif /* !ARDUMOTICS_CONFIG_TIMER */
 
 
 static struct ardumotics_mod *mod_head = NULL;
@@ -27,6 +30,10 @@ void ardumotics_mod_register_all(void)
 #ifdef ARDUMOTICS_CONFIG_LED
 	ardumotics_led_register();
 #endif /* !ARDUMOTICS_CONFIG_LED */
+
+#ifdef ARDUMOTICS_CONFIG_TIMER
+	ardumotics_timer_register();
+#endif /* !ARDUMOTICS_CONFIG_TIMER */
 }
 
 int ardumotics_mod_register(struct ardumotics_mod *module)
@@ -76,9 +83,9 @@ struct ardumotics_mod *ardumotics_mod_find(const char *name)
 	return NULL;
 }
 
-static int ardumotics_mod_exec_cmd(const struct ardumotics_mod *module,
-                                   struct ardumotics_dev *dev,
-                                   const char *cmd, const char **args)
+int ardumotics_mod_exec(const struct ardumotics_mod *module,
+                        struct ardumotics_dev *dev,
+                        const char *cmd, const char **args)
 {
 	const struct ardumotics_mod_cmd *c;
 
@@ -89,17 +96,23 @@ static int ardumotics_mod_exec_cmd(const struct ardumotics_mod *module,
 	return -ENOCMD;
 }
 
-int ardumotics_mod_exec(const char *module, uint8_t dd,
-                        const char *cmd, const char **args)
+t_cmd_handler ardumotics_mod_get_fct(const struct ardumotics_mod *mod,
+                                     const char *cmd)
 {
-	const struct ardumotics_mod *m;
-	struct ardumotics_dev *dev;
+	const struct ardumotics_mod_cmd *c;
 
-	if ((m = ardumotics_mod_find(module)) == NULL)
-		return -ENOMOD;
+	for (c = mod->cmd; c->name != NULL; ++c)
+		if (strcmp(c->name, cmd) == 0)
+			return c->fct;
 
-	if ((dev = ardumotics_dev_find(dd)) == NULL)
-		return -ENODEV;
+	return NULL;
+}
 
-	return ardumotics_mod_exec_cmd(m, dev, cmd, args);
+int ardumotics_mod_nbargs(const char **args)
+{
+	int res;
+
+	for (res = 0; args[res] != NULL; ++res)
+		;
+	return res;
 }

@@ -4,6 +4,12 @@
 #include "arduino_io.h"
 #include "ardumotics_errno.h"
 
+#define ARDUINO_NOT_A_PORT 0
+
+#define ARDUINO_PB 2
+#define ARDUINO_PC 3
+#define ARDUINO_PD 4
+
 
 volatile uint8_t *const arduino_io_port_to_mode[] PROGMEM = {
 	ARDUINO_NOT_A_PORT,
@@ -118,6 +124,15 @@ int arduino_io_strtoi(const char *port)
 {
 	int res;
 	char *endstr;
+	uint8_t analogs[] = { A0, A1, A2, A3, A4, A5, A6, A7 };
+
+	if (port[0] == 'A')
+	{
+		res = strtol(port + 1, &endstr, 10);
+		if (errno || (res < 0) || (res > 7) || (*endstr != '\0'))
+			return -EINVAL;
+		return analogs[res];
+	}
 
 	res = strtol(port, &endstr, 10);
 	if (errno || (res < 0) || (res > UINT8_MAX) || (*endstr != '\0'))

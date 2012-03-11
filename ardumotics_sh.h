@@ -8,6 +8,6 @@ struct ardumotics_cmd {
 	int (*callback) (const char **args);
 };
 
-void ardumotics_cmd_exec(char *cmd);
+void ardumotics_sh_exec(char *cmd);
 
 #endif /* !_ARDUMOTICS_SH_H_ */

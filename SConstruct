@@ -33,13 +33,15 @@ Usage: 'scons'          build ardumotics
 ARDUMOTICS_SRCS  = ["ardumotics.c",
                     "ardumotics_mod.c",
                     "ardumotics_dev.c",
+                    "ardumotics_job.c",
                     "ardumotics_sh.c",
                     "ardumotics_log.c",
                     "arduino_io.c",
                     "arduino_uart.c"]
 
 ARDUMOTICS_MODULES = [("modules/temp", "ardumotics_temp", ["ardumotics_temp.c"]),
-                      ("modules/led", "ardumotics_led", ["ardumotics_led.c"])]
+                      ("modules/led", "ardumotics_led", ["ardumotics_led.c"]),
+                      ("modules/timer", "ardumotics_timer", ["ardumotics_timer.c"])]
 
 ardumotics_inc = ["."]
 for m in ARDUMOTICS_MODULES:

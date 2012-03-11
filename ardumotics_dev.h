@@ -3,7 +3,7 @@
 
 # include <stdint.h>
 
-struct ardumotics_mod;
+# include "ardumotics_mod.h"
 
 struct ardumotics_dev {
 	uint8_t				dd;							/**< device descriptor (unique) */
@@ -20,5 +20,9 @@ int ardumotics_dev_register(const char *module, const uint8_t *io_list,
 int ardumotics_dev_unregister(uint8_t dd);
 
 struct ardumotics_dev *ardumotics_dev_find(int dd);
+int ardumotics_dev_exec(int dd, const char *cmd, const char **args);
+
+t_cmd_handler ardumotics_dev_get_fct(const struct ardumotics_dev *dev,
+                                     const char *cmd);
 
 #endif /* _ARDUMOTICS_DEV_H_ */

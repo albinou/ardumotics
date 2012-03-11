@@ -5,25 +5,24 @@
 #include <avr/pgmspace.h>
 
 #include "ardumotics_sh.h"
-#include "ardumotics_mod.h"
 #include "ardumotics_dev.h"
 #include "ardumotics_errno.h"
 #include "arduino_io.h"
 
-static int ardumotics_cmd_help(const char **args);
-static int ardumotics_cmd_mod(const char **args);
-static int ardumotics_cmd_dev(const char **args);
+static int ardumotics_sh_help(const char **args);
+static int ardumotics_sh_mod(const char **args);
+static int ardumotics_sh_dev(const char **args);
 
 static struct ardumotics_cmd ardumotics_cmds[] = {
-	{ "help", ardumotics_cmd_help },
-	{ "mod", ardumotics_cmd_mod },
-	{ "dev", ardumotics_cmd_dev },
+	{ "help", ardumotics_sh_help },
+	{ "mod", ardumotics_sh_mod },
+	{ "dev", ardumotics_sh_dev },
 	{ NULL, NULL },
 };
 
 
-static int ardumotics_cmd_split_args(const char *args[ARDUMOTICS_SH_ARGS_MAX + 1],
-                                     char *cmd)
+static int ardumotics_sh_split_args(const char *args[ARDUMOTICS_SH_ARGS_MAX + 1],
+                                    char *cmd)
 {
 	int i = 0;
 
@@ -49,12 +48,12 @@ static int ardumotics_cmd_split_args(const char *args[ARDUMOTICS_SH_ARGS_MAX + 1
 	return 0;
 }
 
-void ardumotics_cmd_exec(char *cmd)
+void ardumotics_sh_exec(char *cmd)
 {
 	struct ardumotics_cmd *p;
 	const char *args[ARDUMOTICS_SH_ARGS_MAX + 1];
 
-	if (ardumotics_cmd_split_args(args, cmd))
+	if (ardumotics_sh_split_args(args, cmd))
 		return;
 
 	for (p = ardumotics_cmds; p->name != NULL; ++p)
@@ -68,29 +67,24 @@ void ardumotics_cmd_exec(char *cmd)
 		puts_P(PSTR("Unknown command: try \"help\" to get some help"));
 }
 
-static int ardumotics_cmd_help(const char **args)
+static int ardumotics_sh_help(const char **args)
 {
 	puts_P(PSTR("Ardumotics commands:"));
-	puts_P(PSTR("  mod list:                             list loaded modules"));
-	puts_P(PSTR("  mod <name> <cmd> <dd> [args]:         execute a command on a module"));
-	puts_P(PSTR("  dev register <mod_name> <i/o ...>:    register a new device"));
-	puts_P(PSTR("  dev unregister <dd>:                  unregister a device"));
-	puts_P(PSTR("  help:                                 display this help message"));
+	puts_P(PSTR("  mod list                              list loaded modules"));
+	puts_P(PSTR("  mod <mod_name>                        display help on the module"));
+	puts_P(PSTR("  dev <mod_name> register [i/o ...]     register a new device"));
+	puts_P(PSTR("  dev <dd> unregister                   unregister the device"));
+	puts_P(PSTR("  dev <dd> <cmd> [args ...]             execute a command on the device"));
+	puts_P(PSTR("  help                                  display this help message"));
 	return 0;
 }
 
-static int ardumotics_cmd_mod(const char **args)
+static int ardumotics_sh_mod(const char **args)
 {
-	const char *module;
-	const char *cmd;
-	char *endstr;
-	int dd;
-	int res;
-
 	if ((args[1] == NULL) || (strcmp(args[1], "help") == 0))
 	{
-		puts_P(PSTR("usage: mod <name> <cmd> <dd> [args]"));
-		puts_P(PSTR("   or: mod list"));
+		puts_P(PSTR("usage: mod list"));
+		puts_P(PSTR("       mod <mod_name>"));
 		return 0;
 	}
 	if ((strcmp(args[1], "list") == 0))
@@ -98,27 +92,19 @@ static int ardumotics_cmd_mod(const char **args)
 		puts_P(PSTR("TODO: loaded modules should be listed here :)"));
 		return 0;
 	}
+	printf_P(PSTR("TODO: should display help on the module %s :)\n"), args[1]);
 
-	module = args[1];
-	if (args[2] == NULL)
-		cmd = "help";
-	else
-		cmd = args[2];
-	dd = strtol(args[3], &endstr, 10);
-	if (errno || (dd < 0) || (dd > UINT8_MAX) || (*endstr != '\0'))
-	{
-		puts_P(PSTR("Invalid device descriptor"));
-		return -EINVAL;
-	}
-	res = ardumotics_mod_exec(module, dd, cmd, &args[4]);
-	if (res == -ENOMOD)
-		printf_P(PSTR("%s: No such module\n"), module);
-	if (res == -ENOCMD)
-		printf_P(PSTR("%s: No such command \"%s\"\n"), module, cmd);
-	return res;
+	return 0;
 }
 
-static int ardumotics_cmd_dev(const char **args)
+static void ardumotics_sh_dev_help(void)
+{
+	puts_P(PSTR("usage: dev <mod_name> register [i/o ...]"));
+	puts_P(PSTR("       dev <dd> unregister"));
+	puts_P(PSTR("       dev <dd> <cmd> [args ...]"));
+}
+
+static int ardumotics_sh_dev(const char **args)
 {
 	uint8_t io_list[ARDUMOTICS_SH_ARGS_MAX - 3];
 	char *endstr;
@@ -128,12 +114,18 @@ static int ardumotics_cmd_dev(const char **args)
 
 	if ((args[1] == NULL) || (args[2] == NULL) || (strcmp(args[1], "help") == 0))
 	{
-		puts_P(PSTR("usage: register <mod_name> <i/o ...>"));
-		puts_P(PSTR("   or: dev unregister <dd>"));
+		ardumotics_sh_dev_help();
 		return 0;
 	}
-	if (strcmp(args[1], "register") == 0)
+
+	dd = strtol(args[1], &endstr, 10);
+	if (errno || (*endstr != '\0'))
 	{
+		if (strcmp(args[2], "register"))
+		{
+			ardumotics_sh_dev_help();
+			return -EINVAL;
+		}
 		for (i = 0; args[i + 3] != NULL; ++i)
 		{
 			if ((res = arduino_io_strtoi(args[i + 3])) < 0)
@@ -143,29 +135,30 @@ static int ardumotics_cmd_dev(const char **args)
 			}
 			io_list[i] = res;
 		}
-		if ((res = ardumotics_dev_register(args[2], io_list, i)) < 0)
+		if ((res = ardumotics_dev_register(args[1], io_list, i)) < 0)
 			printf_P(PSTR("Cannot register device (errno = %d)\n"), -res);
 		else
-			printf_P(PSTR("%s device registered (dd = %i)\n"), args[2], res);
+			printf_P(PSTR("%s device registered (dd = %i)\n"), args[1], res);
 		return res;
 	}
-	else if (strcmp(args[1], "unregister") == 0)
+
+	if ((dd < 0) || (dd > UINT8_MAX))
 	{
-		dd = strtol(args[2], &endstr, 10);
-		if (errno || (dd < 0) || (dd > UINT8_MAX) || (*endstr != '\0'))
-		{
-			puts_P(PSTR("Invalid device descriptor"));
-			return -EINVAL;
-		}
+		puts_P(PSTR("Invalid device descriptor"));
+		return -ENODEV;
+	}
+	if (strcmp(args[2], "unregister") == 0)
+	{
 		if ((res = ardumotics_dev_unregister(dd)))
 			printf_P(PSTR("Cannot unregister device %i (errno = %d)\n"), dd, -res);
 		else
 			printf_P(PSTR("%s device unregistered (dd = %i)\n"), args[2], res);
-		return res;
 	}
 	else
 	{
-		printf_P(PSTR("No such command %s\n"), args[1]);
-		return -EINVAL;
+		res = ardumotics_dev_exec(dd, args[2], &args[3]);
+		if (res == -ENOCMD)
+			printf_P(PSTR("No such command \"%s\"\n"), args[2]);
 	}
+	return res;
 }

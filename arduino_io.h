@@ -10,16 +10,14 @@
 # define INPUT  0x0
 # define OUTPUT 0x1
 
-# define ARDUINO_NOT_A_PORT 0
-
-# define ARDUINO_PB 2
-# define ARDUINO_PC 3
-# define ARDUINO_PD 4
-
-extern volatile uint8_t *const arduino_io_port_to_mode[];
-extern volatile uint8_t *const arduino_io_port_to_output[];
-extern const uint8_t arduino_io_digital_pin_to_port[30];
-extern const uint8_t arduino_io_digital_pin_to_bit_mask[30];
+# define A0			14
+# define A1			15
+# define A2			16
+# define A3			17
+# define A4			18
+# define A5			19
+# define A6			20
+# define A7			21
 
 
 void arduino_io_pin_mode(uint8_t pin, int mode);

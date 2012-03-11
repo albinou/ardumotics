@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <avr/pgmspace.h>
 
-#include "ardumotics_mod.h"
+#include "ardumotics_dev.h"
 #include "ardumotics_log.h"
 
 #include "ardumotics_temp.h"
