@@ -2,6 +2,8 @@
  * Arduino specific functions to perform I/O
  *
  * Copyright 2012 Albin Kauffmann <albin.kauffmann@gmail.com>
+ * Copyright 2007 David A. Mellis (some code has been taken from the Arduino
+ *   project, file pins_arduino.h)
  *
  * This file is part of Ardumotics.
  *
