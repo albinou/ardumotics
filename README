@@ -1,0 +1,26 @@
+Introduction
+============
+
+Ardumotics is an home automation software plateform running on Arduino (only
+tested on Arduino Uno). However, it only depends on avr-gcc so it should run on
+any AVR microcontroller.
+
+It is developped with modularity in mind and thus allows to add support for new
+devices easily (a "device" can just be a home made printed circuit).
+
+This project is new and still incomplete. Stay tuned!
+
+Compilation
+===========
+
+shell> scons
+
+Installation
+============
+
+shell> scons upload
+
+And now ?
+=========
+
+Connect a serial console and type "help" for details
