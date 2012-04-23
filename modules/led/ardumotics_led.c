@@ -50,14 +50,6 @@ static struct ardumotics_mod mod_led =
 	};
 
 
-void ardumotics_led_register(void)
-{
-	int err;
-
-	if ((err = ardumotics_mod_register(&mod_led)))
-		ardumotics_log_mod_err(&mod_led, err, "cannot register the module");
-}
-
 static int ardumotics_led_init(struct ardumotics_dev *dev)
 {
 	arduino_io_pin_mode(dev->io_list[0], OUTPUT);
@@ -87,3 +79,5 @@ static int ardumotics_led_toggle(struct ardumotics_dev *dev, const char **args)
 		ardumotics_led_off(dev, args);
 	return 0;
 }
+
+ARDUMOTICS_MOD_INIT (led, &mod_led)

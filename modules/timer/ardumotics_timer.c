@@ -86,14 +86,6 @@ static struct ardumotics_job job =
 	};
 
 
-void ardumotics_timer_register(void)
-{
-	int err;
-
-	if ((err = ardumotics_mod_register(&mod_timer)))
-		ardumotics_log_mod_err(&mod_timer, err, "cannot register the module");
-}
-
 ISR(TIMER0_COMPA_vect) {
 }
 
@@ -195,3 +187,5 @@ static int ardumotics_timer_del(struct ardumotics_dev *dev, const char **args)
 {
 	return 0;
 }
+
+ARDUMOTICS_MOD_INIT (timer, &mod_timer)

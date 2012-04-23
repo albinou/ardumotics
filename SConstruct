@@ -36,7 +36,13 @@ env = DefaultEnvironment(CC="avr-gcc",
                          AR="avr-ar",
                          CCFLAGS="-mmcu=%s -DF_CPU=%s -Os -Wall -std=gnu99 \
 -ffunction-sections -fdata-sections" % (MCU, F_CPU),
-                         LINKFLAGS="-mmcu=%s -Wl,--gc-sections"  % (MCU))
+                         LINKFLAGS="-mmcu=%s -Wl,--gc-sections"  % (MCU),
+                         # --whole-archive is needed to include modules init
+                         # functions in the final binary
+                         # I agree these LIBLINK* definitions are dirty... but
+                         # I can't find a better way to make it work
+                         LIBLINKPREFIX="\"-Wl,--whole-archive -l",
+                         LIBLINKSUFFIX="\"\" -Wl,--no-whole-archive\"")
 
 elf_to_hex = Builder(action="%s -O ihex -R .eeprom $SOURCE $TARGET" % (OBJCOPY),
                      suffix=".hex",
@@ -70,13 +76,14 @@ ardumotics_objs = []
 for c in ARDUMOTICS_SRCS:
     ardumotics_objs.append(env.Object(c, CPPPATH=ardumotics_inc))
 
-ardumotics_libs = []
 for m in ARDUMOTICS_MODULES:
-    ardumotics_libs.append(env.StaticLibrary("%s/%s" % (m[0], m[1]),
-                                             ["%s/%s" % (m[0], c) for c in m[2]],
-                                             CPPPATH=ardumotics_inc))
+    env.StaticLibrary("%s/%s" % (m[0], m[1]),
+                      ["%s/%s" % (m[0], c) for c in m[2]],
+                      CPPPATH=ardumotics_inc)
 
-ardumotics_elf = env.Program("ardumotics", ardumotics_objs, LIBS=ardumotics_libs)
+ardumotics_elf = env.Program("ardumotics", ardumotics_objs,
+                             LIBPATH=[m[0] for m in ARDUMOTICS_MODULES],
+                             LIBS=[m[1] for m in ARDUMOTICS_MODULES])
 ardumotics_hex = env.ElfToHex("ardumotics.hex", ardumotics_elf)
 Default(ardumotics_hex)
 

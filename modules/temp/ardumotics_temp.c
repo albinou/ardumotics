@@ -45,16 +45,10 @@ static struct ardumotics_mod mod_temp =
 	};
 
 
-void ardumotics_temp_register(void)
-{
-	int err;
-
-	if ((err = ardumotics_mod_register(&mod_temp)))
-		ardumotics_log_mod_err(&mod_temp, err, "cannot register the module");
-}
-
 static int ardumotics_temp_get(struct ardumotics_dev *dev, const char **args)
 {
 	puts_P(PSTR("OK"));
 	return 0;
 }
+
+ARDUMOTICS_MOD_INIT (temp, &mod_temp)

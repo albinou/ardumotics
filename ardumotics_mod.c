@@ -26,36 +26,8 @@
 #include "ardumotics_config.h"
 #include "ardumotics_errno.h"
 
-#ifdef ARDUMOTICS_CONFIG_TEMP
-# include "ardumotics_temp.h"
-#endif /* !ARDUMOTICS_CONFIG_TEMP */
-
-#ifdef ARDUMOTICS_CONFIG_LED
-# include "ardumotics_led.h"
-#endif /* !ARDUMOTICS_CONFIG_LED */
-
-#ifdef ARDUMOTICS_CONFIG_TIMER
-# include "ardumotics_timer.h"
-#endif /* !ARDUMOTICS_CONFIG_TIMER */
-
-
 static struct ardumotics_mod *mod_head = NULL;
 
-
-void ardumotics_mod_register_all(void)
-{
-#ifdef ARDUMOTICS_CONFIG_TEMP
-	ardumotics_temp_register();
-#endif /* !ARDUMOTICS_CONFIG_TEMP */
-
-#ifdef ARDUMOTICS_CONFIG_LED
-	ardumotics_led_register();
-#endif /* !ARDUMOTICS_CONFIG_LED */
-
-#ifdef ARDUMOTICS_CONFIG_TIMER
-	ardumotics_timer_register();
-#endif /* !ARDUMOTICS_CONFIG_TIMER */
-}
 
 int ardumotics_mod_register(struct ardumotics_mod *module)
 {

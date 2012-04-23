@@ -24,6 +24,15 @@
 
 # include <stdint.h>
 
+# define ARDUMOTICS_MOD_INIT(mod_name, mod_addr)	  \
+	void __attribute__((constructor)) ardumotics_mod_init_ ## mod_name(void) \
+	{ \
+		int err; \
+		if ((err = ardumotics_mod_register(mod_addr))) \
+			ardumotics_log_mod_err(mod_addr, err, "cannot register the module"); \
+	}
+
+
 struct ardumotics_dev;
 
 typedef int (*t_cmd_handler)(struct ardumotics_dev *dev,

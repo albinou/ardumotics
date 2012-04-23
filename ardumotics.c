@@ -36,7 +36,6 @@ int main(void)
 {
 	char *cmd;
 
-	ardumotics_mod_register_all();
 	arduino_uart_init(103);
 
 	arduino_io_pin_mode(13, OUTPUT);
